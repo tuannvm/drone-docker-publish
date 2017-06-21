@@ -1,4 +1,4 @@
-FROM docker:17.06.0-ce-dind
+FROM docker:17.05.0-ce-dind
 RUN apk --update add py-pip bash curl tar docker && \
    pip install awscli
 COPY requirements.txt .
@@ -7,4 +7,4 @@ WORKDIR /srv/
 RUN cd $WORKDIR
 COPY entrypoint.py .
 # COPY Dockerfile-test .
-ENTRYPOINT ["/srv/entrypoint.py"]
+ENTRYPOINT ["/usr/local/bin/dockerd-entrypoint.sh", "/srv/entrypoint.py"]
