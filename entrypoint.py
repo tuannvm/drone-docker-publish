@@ -18,7 +18,7 @@ USERNAME = os.getenv("DOCKER_USERNAME")
 PASSWORD = os.getenv("DOCKER_PASSWORD")
 REPOSITORY = os.getenv("DOCKER_REGISTRY")
 ORGANIZATION = os.getenv("PLUGIN_ORGANIZATION")
-last_commit_id = os.getenv("DRONE_PREV_COMMIT_SHA")
+last_commit_id = os.getenv("DRONE_PREV_COMMIT_SHA") or os.getenv("DRONE_COMMIT_SHA")
 
 # Run git diff to check for modified or added files & folders
 cmd = "git diff --name-status " + \
@@ -26,7 +26,11 @@ cmd = "git diff --name-status " + \
       " HEAD | awk '{print $2}'"
 status, output = commands.getstatusoutput(cmd)
 # beautify output, get folder/file
-changed_objects = output.split("\n")
+try:
+    changed_objects = output.split("\n")
+except ValueError:
+    print "No changes. Skipping build..."
+    exit(0)
 
 # Connect to local docker daemon
 client = docker.DockerClient(version="auto")
