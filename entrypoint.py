@@ -28,6 +28,13 @@ client = docker.DockerClient(version="auto")
 status, output = commands.getstatusoutput(cmd)
 changed_objects = output.split("\n")
 
+print USERNAME
+print REPOSITORY
+print ORGANIZATION
+print base_path
+print last_commit_id
+print cmd
+
 for ob in changed_objects:
     if ob != ".drone.yml" and ob != ".drone.yml.sig":
         folder_path = os.path.dirname(ob)
