@@ -34,7 +34,7 @@ print ORGANIZATION
 print base_path
 print last_commit_id
 print cmd
-
+print changed_objects
 for ob in changed_objects:
     if ob != ".drone.yml" and ob != ".drone.yml.sig":
         folder_path = os.path.dirname(ob)
