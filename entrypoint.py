@@ -7,50 +7,49 @@ import docker
 import time
 import commands
 
-# USERNAME = os.getenv("DOCKER_USERNAME")
+os.system("dockerd &")
+time.sleep(3)  # delays for 3 seconds
+
+# variable to check and skipp build if duplicate
+duplicate_folder_path = ""
+
+# Get environment variables
 USERNAME = os.getenv("DOCKER_USERNAME")
-# PASSWORD = os.getenv("DOCKER_PASSWORD")
 PASSWORD = os.getenv("DOCKER_PASSWORD")
 REPOSITORY = os.getenv("DOCKER_REGISTRY")
 ORGANIZATION = os.getenv("PLUGIN_ORGANIZATION")
-#base_path = os.getenv("DRONE_REPO_LINK").split("//")[1] + "/"
-# last_commit_id = os.getenv("DRONE_PREV_COMMIT_SHA") or "3b2b483ec8e81ecd88db428111cc89474b9cc37c"
-last_commit_id = "3b2b483ec8e81ecd88db428111cc89474b9cc37c"
-# last_commit_id = os.getenv("DRONE_PREV_COMMIT_SHA")
-cmd = "git diff --name-status " + last_commit_id + " HEAD | awk '{print $2}'"
-duplicate_folder_path = ""
+last_commit_id = os.getenv("DRONE_PREV_COMMIT_SHA")
 
-os.system("dockerd &")
-time.sleep(3)  # delays for 5 seconds
-
-client = docker.DockerClient(version="auto")
-# cmd = "cd /Users/tuannvm/Projects/honestbee/base-images && git diff --name-status " + last_commit_id + " HEAD | awk '{print $2}'"
-
+# Run git diff to check for modified or added files & folders
+cmd = "git diff --name-status " + \
+      last_commit_id + \
+      " HEAD | awk '{print $2}'"
 status, output = commands.getstatusoutput(cmd)
+# beautify output, get folder/file
 changed_objects = output.split("\n")
 
-print USERNAME
-print REPOSITORY
-print ORGANIZATION
-print last_commit_id
-print os.listdir('.')
-print changed_objects
-for ob in changed_objects:
-    if ob != ".drone.yml" and ob != ".drone.yml.sig":
-        folder_path = os.path.dirname(ob)
-        if folder_path == duplicate_folder_path:
+# Connect to local docker daemon
+client = docker.DockerClient(version="auto")
+
+for ob in changed_objects:  # loop through folder lists
+    if ob != ".drone.yml" and ob != ".drone.yml.sig":  # skip build if only drone config files are changed
+        folder_path = os.path.dirname(ob)  # get folder name
+        if folder_path == duplicate_folder_path:  # check for duplication, skip if true
             break
-        client.login(username=USERNAME, password=PASSWORD, registry=REPOSITORY)
-        if os.path.isfile(folder_path + "/Dockerfile"):
+        client.login(username=USERNAME,
+                     password=PASSWORD,
+                     registry=REPOSITORY)  # authenticate with repository
+        if os.path.isfile(folder_path + "/Dockerfile"):  # check if modified folders have Dockerfile or not
             print "building " + folder_path + " image..."
             client.images.build(path=folder_path,
                                 tag=REPOSITORY + "/" + ORGANIZATION + "/" + folder_path + ":latest",
                                 rm=True,
                                 cache_from=["alpine"],
-                                timeout=120)
+                                timeout=120)  # build image
 
             print "pushing " + folder_path + " to " + REPOSITORY + "..."
-            client.images.push(repository=REPOSITORY + "/" + ORGANIZATION + "/" + folder_path, tag="latest")
+            client.images.push(repository=REPOSITORY + "/" + ORGANIZATION + "/" + folder_path,
+                               tag="latest")  # push image to repository
             duplicate_folder_path = folder_path
-        else:
-            print "No changes. Skipping build..."
+    else:
+        print "No changes. Skipping build..."
