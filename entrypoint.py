@@ -13,7 +13,7 @@ USERNAME = os.getenv("DOCKER_USERNAME")
 PASSWORD = os.getenv("DOCKER_PASSWORD")
 REPOSITORY = os.getenv("DOCKER_REGISTRY")
 ORGANIZATION = os.getenv("PLUGIN_ORGANIZATION")
-base_path = os.getenv("DRONE_REPO_LINK").split("//")[1] + "/"
+#base_path = os.getenv("DRONE_REPO_LINK").split("//")[1] + "/"
 # last_commit_id = os.getenv("DRONE_PREV_COMMIT_SHA") or "3b2b483ec8e81ecd88db428111cc89474b9cc37c"
 last_commit_id = "3b2b483ec8e81ecd88db428111cc89474b9cc37c"
 # last_commit_id = os.getenv("DRONE_PREV_COMMIT_SHA")
@@ -32,9 +32,8 @@ changed_objects = output.split("\n")
 print USERNAME
 print REPOSITORY
 print ORGANIZATION
-print base_path
 print last_commit_id
-print cmd
+print os.listdir('.')
 print changed_objects
 for ob in changed_objects:
     if ob != ".drone.yml" and ob != ".drone.yml.sig":
@@ -50,7 +49,7 @@ for ob in changed_objects:
                                 cache_from=["alpine"],
                                 timeout=120)
 
-            print "pushing " + folder_path + " to " + ORGANIZATION + "..."
+            print "pushing " + folder_path + " to " + REPOSITORY + "..."
             client.images.push(repository=REPOSITORY + "/" + ORGANIZATION + "/" + folder_path, tag="latest")
             duplicate_folder_path = folder_path
         else:
