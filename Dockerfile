@@ -1,5 +1,5 @@
 FROM docker:17.05.0-ce-dind
-RUN apk --update add py-pip bash curl tar docker && \
+RUN apk --update add py-pip bash curl tar docker git && \
    pip install awscli
 COPY requirements.txt .
 RUN pip install -r requirements.txt
