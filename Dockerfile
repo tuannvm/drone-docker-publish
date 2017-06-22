@@ -1,4 +1,4 @@
-FROM docker:17.05.0-ce-dind
+FROM docker:17.06.0-ce-dind
 RUN apk --update add py-pip bash curl tar docker git && \
    pip install awscli
 WORKDIR /srv/
