@@ -17,7 +17,7 @@ base_path = os.getenv("DRONE_REPO_LINK").split("//")[1] + "/"
 # last_commit_id = os.getenv("DRONE_PREV_COMMIT_SHA") or "3b2b483ec8e81ecd88db428111cc89474b9cc37c"
 last_commit_id = "3b2b483ec8e81ecd88db428111cc89474b9cc37c"
 # last_commit_id = os.getenv("DRONE_PREV_COMMIT_SHA")
-cmd = "cd " + base_path + " && git diff --name-status " + last_commit_id + " HEAD | awk '{print $2}'"
+cmd = "git diff --name-status " + last_commit_id + " HEAD | awk '{print $2}'"
 
 os.system("dockerd &")
 time.sleep(3)  # delays for 5 seconds
