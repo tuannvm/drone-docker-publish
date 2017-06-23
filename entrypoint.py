@@ -47,8 +47,6 @@ for ob in changed_objects:  # loop through folder lists
             print "building " + folder_path + " image..."
             client.images.build(path=folder_path,
                                 tag=REPOSITORY + "/" + ORGANIZATION + "/" + folder_path + ":latest",
-                                rm=True,
-                                cache_from=["alpine"],
                                 timeout=120)  # build image
 
             print "pushing " + folder_path + " to " + REPOSITORY + "..."
