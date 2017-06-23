@@ -7,8 +7,8 @@ import docker
 import time
 import commands
 
-# os.system("dockerd --host unix:///var/run/docker.sock --storage-driver vfs &")
-# time.sleep(3)  # delays for 3 seconds
+os.system("dockerd --host unix:///var/run/docker.sock --storage-driver vfs &")
+time.sleep(3)  # delays for 3 seconds
 
 # variable to check and skipp build if duplicate
 duplicate_folder_path = ""
