@@ -7,8 +7,8 @@ import docker
 import time
 import commands
 
-os.system("dockerd &")
-time.sleep(3)  # delays for 3 seconds
+# os.system("dockerd --host unix:///var/run/docker.sock --storage-driver vfs &")
+# time.sleep(3)  # delays for 3 seconds
 
 # variable to check and skipp build if duplicate
 duplicate_folder_path = ""
@@ -55,5 +55,3 @@ for ob in changed_objects:  # loop through folder lists
             client.images.push(repository=REPOSITORY + "/" + ORGANIZATION + "/" + folder_path,
                                tag="latest")  # push image to repository
             duplicate_folder_path = folder_path
-    else:
-        print "No changes. Skipping build..."

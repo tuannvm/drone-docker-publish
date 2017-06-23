@@ -6,5 +6,9 @@ RUN cd $WORKDIR
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY entrypoint.py /usr/local/bin/
+COPY entrypoint.sh /usr/local/bin/
+COPY supervisord.conf /etc/
+RUN mkdir -p /lib/modules && \
+    mkdir -p /var/log/supervisord/
 # COPY Dockerfile-test .
-ENTRYPOINT ["/usr/local/bin/dockerd-entrypoint.sh", "/usr/local/bin/entrypoint.py"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.py"]
